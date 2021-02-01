@@ -1,0 +1,15 @@
+include Makefile
+
+.PHONY: openshift-manifests
+openshift-manifests: $(MANIFEST_DIR) $(BUILD_DIR) $(KUSTOMIZE)
+	mkdir -p $(RELEASE_DIR)/openshift
+	rm -rf $(BUILD_DIR)/config
+	cp -R config $(BUILD_DIR)
+	sed -i'' -e 's@imagePullPolicy: .*@imagePullPolicy: '"$(PULL_POLICY)"'@' $(BUILD_DIR)/config/manager/manager_pull_policy.yaml
+	"$(KUSTOMIZE)" build --load_restrictor=LoadRestrictionsNone $(BUILD_DIR)/config/openshift > $(RELEASE_DIR)/openshift/infrastructure-components.yaml
+
+.PHONY: ocp-manifests
+ocp-manifests:
+	$(MAKE) openshift-manifests STAGE=release MANIFEST_DIR=$(OVERRIDES_DIR) PULL_POLICY=Always IMAGE=$(DEV_CONTROLLER_IMG):$(DEV_TAG) -f Makefile.openshift
+	cp metadata.yaml $(OVERRIDES_DIR)/metadata.yaml
+

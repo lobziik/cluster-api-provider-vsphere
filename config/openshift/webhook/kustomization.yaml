@@ -1,0 +1,12 @@
+namespace: openshift-cluster-api-vsphere
+
+resources:
+- ../../webhook/manifests.yaml
+- ../../webhook/service.yaml
+
+configurations:
+- kustomizeconfig.yaml
+
+patchesStrategicMerge:
+- webhookcainjection_patch.yaml
+
