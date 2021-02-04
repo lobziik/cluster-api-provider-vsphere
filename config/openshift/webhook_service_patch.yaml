@@ -4,8 +4,9 @@ metadata:
   name: webhook-service
   namespace: system
   annotations:
-    service.alpha.openshift.io/serving-cert-secret-name: ocp-capv-webhook-cert
+    service.beta.openshift.io/serving-cert-secret-name: ocp-capv-webhook-cert
 spec:
   ports:
     - port: 443
+      name: https
       targetPort: webhook-server
